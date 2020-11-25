@@ -43,6 +43,6 @@ with open('dataset.csv') as f:
         			getMonthlyPrice(column)
         print('Row weeklyTrends',rowIndex + 3,getWeeklyTrends.weeklyTrends)
         df_marks = df_marks.append(getWeeklyTrends.weeklyTrends, ignore_index=True)
-    #print('Row monthly',rowIndex + 3,'processed', getMonthlyPrice.averagePricePerMonth)
+    	print('Row monthly',rowIndex + 3,'processed', getMonthlyPrice.averagePricePerMonth)
     print(df_marks)
     df_marks.to_csv('dataset-with-trends.csv')
