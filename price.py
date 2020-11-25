@@ -1,44 +1,50 @@
 import csv
 import moment
 from datetime import datetime
+import pandas as pd
 
 def days_between(d1, d2):
     d1 = datetime.strptime(d1, "%Y-%m-%d")
     d2 = datetime.strptime(d2, "%Y-%m-%d")
     return abs((d2 - d1).days)
 
-def getWeeklyTrends(currentWeekPrice, nextWeekPrice):
-	increase = nextWeekPrice - currentWeekPrice
-	print('nextWeekPrice', nextWeekPrice)
-	print('currentWeekPrice', currentWeekPrice)
-	return round((increase / nextWeekPrice) * 100, 2)
+def getWeeklyTrends(currentWeek, nextWeek):
+	if (days_between(column[0], previousColumn[0]) == 7):
+		currentWeekPrice = float(currentWeek[1])
+		nextWeekPrice = float(nextWeek[1])
+		increase = nextWeekPrice - currentWeekPrice
+		getWeeklyTrends.weeklyTrends.append((nextWeek[0], str(round((increase / nextWeekPrice) * 100, 2)) + '%'))
+	else:
+		getWeeklyTrends.weeklyTrends.append((nextWeek[0], ''))
 
 def getMonthlyPrice(currentWeek):
 	date = datetime.strptime(currentWeek[0], "%Y-%m-%d")
-	print('currentWeek', currentWeek)
 	month = str(date.strftime("%Y-%m"))
-	print('currentMonth', month)
-	print("BEFORE", getMonthlyPrice.averagePricePerMonth.keys())
 	if (month in getMonthlyPrice.averagePricePerMonth.keys()):
 		getMonthlyPrice.averagePricePerMonth[month] = (getMonthlyPrice.averagePricePerMonth[month] + float(currentWeek[1])) / 2
-		print("SUM getMonthlyPrice.averagePricePerMonth[month]", getMonthlyPrice.averagePricePerMonth[month])
 	else:
 		getMonthlyPrice.averagePricePerMonth[month] = float(currentWeek[1])
-		print("NEW getMonthlyPrice.averagePricePerMonth[month]", getMonthlyPrice.averagePricePerMonth[month])
 
 with open('dataset.csv') as f:
     reader = csv.DictReader(f)
-    nextWeek = None
-    getMonthlyPrice.averagePricePerMonth = {} 
-    for i, row in enumerate(reader):
-        for index, currentWeek in enumerate(row.items()):
-        	if (i == 0):
-        		print('-----------')
-        		if (len(currentWeek[1]) > 1 and nextWeek is not None):
-        			if (days_between(currentWeek[0], nextWeek[0]) == 7):
-        				print(getWeeklyTrends(float(currentWeek[1]), float(nextWeek[1])), '%')
-        		if (index > 4 and len(currentWeek[1]) > 1): # TODO check if it's a price instead of index
-        			nextWeek = currentWeek[:]
-        			getMonthlyPrice(currentWeek)
-
-
+    previousColumn = None
+    for rowIndex, row in enumerate(reader):
+        for columnIndex, column in enumerate(row.items()):
+        	if (columnIndex == 0):
+        		getMonthlyPrice.averagePricePerMonth = {}
+        		getWeeklyTrends.weeklyTrends = []
+        	if (columnIndex == 0 and rowIndex == 0):
+        		df_marks = pd.DataFrame()
+        	if (columnIndex > 4):
+        		if (len(column[1]) > 1 and previousColumn is not None):
+        			getWeeklyTrends(column, previousColumn)
+        		else:
+					getWeeklyTrends.weeklyTrends.append((nextWeek[0], ''))
+        		if (len(column[1]) > 1): # TODO: check if it's a price instead of columnIndex
+        			previousColumn = column[:]
+        			getMonthlyPrice(column)
+        print(df_marks)
+        print('Row weeklyTrends',rowIndex + 3,getWeeklyTrends.weeklyTrends)
+        df_marks = df_marks.append(getWeeklyTrends.weeklyTrends, ignore_index=False)
+        #print('Row monthly',rowIndex + 3,'processed', getMonthlyPrice.averagePricePerMonth)
+    df_marks.to_csv('dataset-with-trends.csv')
