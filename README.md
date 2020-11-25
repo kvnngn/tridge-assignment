@@ -21,5 +21,7 @@ SCRIPT 2
 [Example]
 
 $> python3 aggregatePriceTrends.py Country
+
 $> python3 aggregatePriceTrends.py Grades
+
 $> python3 aggregatePriceTrends.py Region
