@@ -19,7 +19,7 @@ def calculateTrendPrice(currentWeek, nextWeek):
 		currentWeekPrice = float(currentWeek[1])
 		nextWeekPrice = float(nextWeek[1])
 		increase = nextWeekPrice - currentWeekPrice
-		return str(round((increase / nextWeekPrice) * 100, 2)) + '%'
+		return str(round((increase / nextWeekPrice) * 100, 2))
 	except ValueError:
 		pass
 
@@ -63,8 +63,8 @@ with open('dataset.csv') as f:
         		calculateTrendPrice.weeklyTrends[column[0]] = column[1]
         		monthlyTrends[column[0]] = column[1]
         if (len(getMonthlyPrice.averagePricePerMonth) > 1):
-        	print('[ENDED] Weekly Price trends for row',rowIndex, ' has been calculated.')
-        	print('[PROCESSING] Calculating monthly price trends row is calculating',rowIndex, '...')
+        	print('[ENDED] Weekly Price trends for row',rowIndex, 'has been calculated.')
+        	print('[PROCESSING] Calculating monthly price trends for row',rowIndex, '...')
         	previousItem = None
         	for j, item in enumerate(getMonthlyPrice.averagePricePerMonth.items()):
         		if (previousItem != None and type(item[1]) != str and type(previousItem[1]) != str):
@@ -80,7 +80,7 @@ with open('dataset.csv') as f:
         			else:
         				monthlyTrends[previousItem[0]] = ''
         		previousItem = item[:]
-        	print('[ENDED] Monthly Price trends for row',rowIndex, ' has been calculated.')
+        	print('[ENDED] Monthly Price trends for row',rowIndex, 'has been calculated.')
         else:
         	print('Can find price to calculate weekly and monthly trends')
         df_weekly_trends = df_weekly_trends.append(calculateTrendPrice.weeklyTrends, ignore_index=True)
