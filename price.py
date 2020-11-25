@@ -19,7 +19,7 @@ def getWeeklyTrends(currentWeek, nextWeek):
 
 def getMonthlyPrice(currentWeek):
 	date = datetime.strptime(currentWeek[0], "%Y-%m-%d")
-	month = str(date.strftime("%Y-%m"))
+	month = str(date.strftime("%Y-%m") + ' (average price)')
 	if (month in getMonthlyPrice.averagePricePerMonth.keys()):
 		getMonthlyPrice.averagePricePerMonth[month] = (getMonthlyPrice.averagePricePerMonth[month] + float(currentWeek[1])) / 2
 	else:
@@ -41,8 +41,10 @@ with open('dataset.csv') as f:
         		if (len(column[1]) > 1): # TODO: check if it's a price instead of columnIndex
         			previousColumn = column[:]
         			getMonthlyPrice(column)
+        print('Row monthly',rowIndex + 3,'processed', getMonthlyPrice.averagePricePerMonth)
         print('Row weeklyTrends',rowIndex + 3,getWeeklyTrends.weeklyTrends)
-        df_marks = df_marks.append(getWeeklyTrends.weeklyTrends, ignore_index=True)
-    	print('Row monthly',rowIndex + 3,'processed', getMonthlyPrice.averagePricePerMonth)
+        new_row = getWeeklyTrends.weeklyTrends.update(getMonthlyPrice.averagePricePerMonth)
+        print('NEW ROWWW',new_row)
+        df_marks = df_marks.append(new_row, ignore_index=True)
     print(df_marks)
     df_marks.to_csv('dataset-with-trends.csv')
