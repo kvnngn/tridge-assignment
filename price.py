@@ -44,7 +44,7 @@ with open('dataset.csv') as f:
     for rowIndex, row in enumerate(reader):
         for columnIndex, column in enumerate(row.items()):
         	if (columnIndex == 0): # TODO: reset value before second loop instead of using if condition
-        		print('[PROCESSING] Calculating wekekly price trends for row',rowIndex, '...')
+        		print('[PROCESSING] Calculating weekly price trends for row',rowIndex, '...')
         		getMonthlyPrice.averagePricePerMonth = {}
         		calculateTrendPrice.weeklyTrends = {}
         		monthlyTrends = {}
